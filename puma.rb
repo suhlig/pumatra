@@ -1,4 +1,4 @@
-root = "#{Dir.getwd}"
+root = Dir.getwd.to_s
 
 bind "unix://#{root}/tmp/puma/socket"
 pidfile "#{root}/tmp/puma/pid"
