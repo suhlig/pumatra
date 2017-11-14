@@ -11,8 +11,12 @@ class Pumatra < Sinatra::Base
     'Hello'
   end
 
-  post '/droplets' do
+  put '/droplets/:guid' do |guid|
     File.read(request.env['HTTP_DROPLET_FILE'])
+  end
+
+  put %r{^/droplets/(.*/.*)} do |path|
+    "TODO do something with #{path}; FOO is #{request.env['FOO'].inspect}\n"
   end
 
   run! if app_file == $0

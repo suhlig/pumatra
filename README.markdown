@@ -24,4 +24,4 @@ $ fswatch nginx.conf | xargs -I {} nginx -s reload
 
 # Post a file
 
-curl -H "Content-Type:application/octet-stream" --data-binary @nginx.conf http://localhost:51880/droplets
+curl -X PUT -H "Content-Type:application/octet-stream" --data-binary @nginx.conf http://localhost:51880/droplets
