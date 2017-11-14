@@ -1,4 +1,4 @@
 source :rubygems
 
 gem 'puma'
-gem 'sinatra'
+gem 'sinatra', '1.4.7'
