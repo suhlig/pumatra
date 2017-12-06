@@ -21,7 +21,9 @@ describe 'Pumatra' do
       content_type: 'application/octet-stream'
     )
 
-    expect(stored_file).to exist
+    eventually(10) do
+      expect(stored_file).to exist
+    end
   end
 
   it 'cannot download a non-existing guid' do
@@ -50,5 +52,20 @@ describe 'Pumatra' do
 
   def stored_file
     Pathname.new("tmp/store/#{digest}")
+  end
+
+  def eventually(timeout)
+    start_time = Time.now
+
+    loop do
+      begin
+        yield
+        break
+      rescue RSpec::Expectations::ExpectationNotMetError
+        elapsed_time = Time.now - start_time
+        fail "Could not find #{stored_file} within #{timeout} s" if elapsed_time >= timeout
+        sleep 0.1
+      end
+    end
   end
 end

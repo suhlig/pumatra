@@ -9,6 +9,5 @@ windows:
       layout: main-horizontal
       panes:
         -
-        - nginx -p $PWD -c nginx.conf
+        - rerun foreman start
         - fswatch nginx.conf | xargs -I {} nginx -s reload
-        - rerun -- bundle exec puma --config puma.rb

@@ -1,4 +1,4 @@
-# Pumatra = Puma + Sinatra
+# Pumatra = Puma + Sinatra with Background Worker
 
 Source: https://gist.github.com/ctalkington/4448153
 
@@ -9,25 +9,20 @@ bundle install
 mkdir -p tmp/puma tmp/uploads tmp/store
 ```
 
-# First Start
-
-## Start Sinatra app
+We'll also need a [Faktory installation](https://github.com/contribsys/faktory/wiki/Installation) and two environment variables to point to it, e.g. for a Faktory running in a Docker container:
 
 ```bash
-bundle exec puma --config puma.rb
+export FAKTORY_PROVIDER=FAKTORY_URL
+export FAKTORY_URL=tcp://$(docker-machine ip default):7419
 ```
 
-## Start nginx
+## Start
 
 ```bash
-$ nginx -p $PWD -c nginx.conf
+foreman start
 ```
 
-`-p` sets the prefix path, which will be used in `nginx.conf` when evaluating relative paths. See [this SO article](https://stackoverflow.com/a/25486871/3212907) for details.
-
-## Test
-
-Upload a file (plain HTTP PUT):
+## Upload a file (plain HTTP PUT)
 
 ```bash
 curl -X PUT -H "Content-Type:application/octet-stream" --data-binary README.markdown "http://localhost/droplets/550b1d35946db2844bc30ed343599ca573fb9058f3d5c33d777822657c3f51b3"
@@ -54,7 +49,5 @@ $ fswatch nginx.conf | xargs -I {} nginx -s reload
 Rerun does the reloading for Ruby files:
 
 ```bash
-$ rerun -- bundle exec puma --config puma.rb
+$ rerun foreman start
 ```
-
-The `.tmuxinator.yml` file starts all of these commands in a single tmux window.

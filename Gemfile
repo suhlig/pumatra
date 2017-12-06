@@ -2,6 +2,7 @@
 
 source 'https://rubygems.org'
 
+gem 'faktory_worker_ruby'
 gem 'puma'
 gem 'sinatra'
 

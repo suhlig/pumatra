@@ -3,6 +3,7 @@
 require 'sinatra'
 require 'json'
 require_relative 'blobstore'
+require_relative 'worker'
 
 configure {
   set :server, :puma
@@ -11,7 +12,8 @@ configure {
 module Pumatra
   class App < Sinatra::Base
     configure do
-      set :blobstore, Blobstore.new('tmp/store')
+      set :blobstore_root, 'tmp/store'
+      set :blobstore, Blobstore.new(settings.blobstore_root)
     end
 
     head '/droplets/:guid' do |guid|
@@ -30,13 +32,12 @@ module Pumatra
     put '/droplets/:guid' do |guid|
       content_type 'application/json'
       uploaded_file = request.env['HTTP_DROPLET_FILE']
-      settings.blobstore.put(guid, uploaded_file)
+      Worker.perform_async(settings.blobstore_root, guid, uploaded_file)
 
       {
         droplet: {
           guid: guid,
           url: request.url,
-          size: settings.blobstore.size(guid),
         }
       }.to_json
     end
