@@ -1,0 +1,6 @@
+-I lib
+--color
+--format documentation
+--order random
+--require spec_helper
+--tty

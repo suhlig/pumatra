@@ -10,6 +10,10 @@ configure {
 
 class Pumatra < Sinatra::Base
   get '/droplets/:guid' do |guid|
+    unless File.exist?("tmp/store/#{guid}")
+      halt 404, {'Content-Type' => 'text/plain'}, "There is no droplet with GUID #{guid}"
+    end
+
     content_type 'application/octet-stream'
     File.read("tmp/store/#{guid}")
   end
