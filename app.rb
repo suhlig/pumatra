@@ -1,22 +1,31 @@
 #!/usr/bin/env ruby
 
 require 'sinatra'
+require 'json'
+require 'fileutils'
 
 configure {
   set :server, :puma
 }
 
 class Pumatra < Sinatra::Base
-  get '/' do
-    'Hello'
+  get '/droplets/:guid' do |guid|
+    content_type 'application/octet-stream'
+    File.read("tmp/store/#{guid}")
   end
 
   put '/droplets/:guid' do |guid|
-    File.read(request.env['HTTP_DROPLET_FILE'])
-  end
+    content_type 'application/json'
+    uploaded_file = request.env['HTTP_DROPLET_FILE']
+    FileUtils.copy(uploaded_file, "tmp/store/#{guid}")
 
-  put %r{^/droplets/(.*/.*)} do |path|
-    "TODO do something with #{path}; FOO is #{request.env['FOO'].inspect}\n"
+    {
+      droplet: {
+        guid: guid,
+        url: request.url,
+        size: File.size(uploaded_file),
+      }
+    }.to_json
   end
 
   run! if app_file == $0
