@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
-require './app'
+require_relative 'lib/pumatra/app'
 
-run Pumatra
+run Pumatra::App

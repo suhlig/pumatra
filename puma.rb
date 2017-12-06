@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 root = Dir.getwd.to_s
 
 bind "unix://#{root}/tmp/puma/socket"

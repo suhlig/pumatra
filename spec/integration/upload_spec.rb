@@ -15,8 +15,8 @@ describe 'Pumatra' do
   end
 
   it 'can upload a file' do
-    response = RestClient.put(
-    endpoint,
+    RestClient.put(
+      endpoint,
       droplet_content,
       content_type: 'application/octet-stream'
     )
@@ -24,8 +24,8 @@ describe 'Pumatra' do
     expect(stored_file).to exist
   end
 
-  it "cannot download a non-existing file" do
-    expect{RestClient.get( endpoint )}.to raise_error RestClient::NotFound
+  it 'cannot download a non-existing file' do
+    expect { RestClient.get(endpoint) }.to raise_error RestClient::NotFound
   end
 
   context 'a droplet exists' do
@@ -33,15 +33,14 @@ describe 'Pumatra' do
       stored_file.write(droplet_content)
     end
 
-    it "can download a file" do
+    it 'can download a file' do
       response = RestClient.get(
-      endpoint
+        endpoint
       )
 
       expect(response.body).to eq(droplet_content)
     end
   end
-
 
   def stored_file
     Pathname.new("tmp/store/#{digest}")
