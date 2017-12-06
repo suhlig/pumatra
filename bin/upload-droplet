@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+
+require 'digest'
+require 'restclient'
+
+def die(last_will)
+  warn "Error: #{last_will}"
+  exit 1
+end
+
+die('Missing argument - which droplet to upload?') if ARGV.empty?
+uploading_file = ARGV.first
+die("Could not find #{uploading_file}") unless File.exist?(uploading_file)
+die("Could not read #{uploading_file}") unless File.readable?(uploading_file)
+
+digest = Digest::SHA256.file(uploading_file).hexdigest
+
+puts RestClient.put(
+  "http://localhost:51880/droplets/#{digest}",
+  File.read(uploading_file),
+  content_type: 'application/octet-stream'
+)
