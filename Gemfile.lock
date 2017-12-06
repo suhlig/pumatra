@@ -16,7 +16,7 @@ PLATFORMS
 
 DEPENDENCIES
   puma
-  sinatra (= 1.4.7)
+  sinatra
 
 BUNDLED WITH
    1.15.4
