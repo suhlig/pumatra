@@ -9,5 +9,5 @@ windows:
       layout: main-horizontal
       panes:
         -
-        - rerun foreman start
+        - rerun -i 'spec/*' foreman start
         - fswatch nginx.conf | xargs -I {} nginx -s reload

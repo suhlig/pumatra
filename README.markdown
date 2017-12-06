@@ -46,8 +46,8 @@ $ fswatch nginx.conf | xargs -I {} nginx -s reload
 
   This assumes that nginx was already running (see above).
 
-Rerun does the reloading for Ruby files:
+Rerun does the reloading for Ruby files (but not when specs have changed):
 
 ```bash
-$ rerun foreman start
+$ rerun -i 'spec/*' foreman start
 ```
