@@ -14,6 +14,10 @@ module Pumatra
       set :blobstore, Blobstore.new('tmp/store')
     end
 
+    head '/droplets/:guid' do |guid|
+      settings.blobstore.exist?(guid) ? 200 : 404
+    end
+
     get '/droplets/:guid' do |guid|
       unless settings.blobstore.exist?(guid)
         halt 404, { 'Content-Type' => 'text/plain' }, "There is no droplet with GUID #{guid}"
