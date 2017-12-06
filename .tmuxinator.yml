@@ -1,0 +1,14 @@
+name: <%= File.basename(Dir.pwd) %>
+
+pre:
+  - bundle install
+  - mkdir -p tmp/puma tmp/uploads tmp/store
+
+windows:
+  - dev:
+      layout: main-horizontal
+      panes:
+        -
+        - nginx -c $(pwd)/nginx.conf
+        - fswatch nginx.conf | xargs -I {} nginx -s reload
+        - rerun -- bundle exec puma --config puma.rb
