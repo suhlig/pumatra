@@ -18,8 +18,10 @@ bundle exec puma --config puma.rb
 ## Start nginx
 
 ```bash
-$ nginx -c $(pwd)/nginx.conf
+$ nginx -p $PWD -c nginx.conf
 ```
+
+`-p` sets the prefix path, which will be used in `nginx.conf` when evaluating relative paths. See [this SO article](https://stackoverflow.com/a/25486871/3212907) for details.
 
 ## Upload a file (plain HTTP PUT)
 
