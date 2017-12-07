@@ -5,8 +5,9 @@ require 'faktory'
 require_relative 'blobstore'
 
 module Pumatra
-  class Worker
+  class BlobstoreUploader
     include Faktory::Job
+    faktory_options retry: 3
 
     def perform(blobstore_root, guid, uploading_file)
       puts "Uploading #{uploading_file} as #{guid} to #{blobstore_root}"

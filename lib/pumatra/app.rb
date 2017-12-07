@@ -3,7 +3,7 @@
 require 'sinatra'
 require 'json'
 require_relative 'blobstore'
-require_relative 'worker'
+require_relative 'blobstore_uploader'
 
 configure {
   set :server, :puma
@@ -32,7 +32,12 @@ module Pumatra
     put '/droplets/:guid' do |guid|
       content_type 'application/json'
       uploaded_file = request.env['HTTP_DROPLET_FILE']
-      Worker.perform_async(settings.blobstore_root, guid, uploaded_file)
+
+      begin
+        BlobstoreUploader.perform_async(settings.blobstore_root, guid, uploaded_file)
+      rescue Errno::ECONNREFUSED
+        halt 500, { 'Content-Type' => 'text/plain' }, "Could not enqueue blobstore upload job because it could not connect to Faktory"
+      end
 
       {
         droplet: {
