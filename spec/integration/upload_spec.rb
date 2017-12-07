@@ -5,7 +5,7 @@ require 'securerandom'
 require 'restclient'
 require 'pathname'
 
-describe 'Pumatra' do
+describe 'File Upload' do
   let(:digest) { SecureRandom.uuid }
   let(:droplet_content) { SecureRandom.bytes(128) }
   let(:endpoint) { "http://localhost:51880/droplets/#{digest}" }
