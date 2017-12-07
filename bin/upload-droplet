@@ -3,10 +3,17 @@
 
 require 'digest'
 require 'restclient'
+require 'json'
 
 def die(last_will)
   warn "Error: #{last_will}"
   exit 1
+end
+
+def exist?(url)
+  RestClient.head(url) do |response, request, result|
+    response.code
+  end == 200
 end
 
 die('Missing argument - which droplet to upload?') if ARGV.empty?
@@ -17,11 +24,22 @@ die("Could not read #{uploading_file}") unless File.readable?(uploading_file)
 digest = Digest::SHA256.file(uploading_file).hexdigest
 
 begin
-  puts RestClient.put(
+  response = RestClient.put(
     "http://localhost:51880/droplets/#{digest}",
     File.read(uploading_file),
     content_type: 'application/octet-stream'
   )
+
+  response = JSON.parse(response.body)
+  url = response['droplet']['url']
+
+  # TODO: Time out after n seconds
+  until exist?(url)
+    warn "Blobstore upload for #{digest} still in progress"
+    sleep 1
+  end
+
+  puts url
 rescue RestClient::Exception => e
   warn "Error #{e.response.body}"
 end

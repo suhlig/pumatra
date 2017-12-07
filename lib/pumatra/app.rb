@@ -2,6 +2,8 @@
 
 require 'sinatra'
 require 'json'
+require 'addressable/uri'
+
 require_relative 'blobstore'
 require_relative 'blobstore_uploader'
 
@@ -39,10 +41,13 @@ module Pumatra
         halt 500, { 'Content-Type' => 'text/plain' }, 'Could not enqueue blobstore upload job because it could not connect to Faktory'
       end
 
+      uri = Addressable::URI.parse(request.url)
+      uri.port = 51880
+
       {
         droplet: {
           guid: guid,
-          url: request.url,
+          url: uri,
         }
       }.to_json
     end

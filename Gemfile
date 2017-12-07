@@ -2,6 +2,7 @@
 
 source 'https://rubygems.org'
 
+gem 'addressable'
 gem 'faktory_worker_ruby'
 gem 'puma'
 gem 'sinatra'
