@@ -1,20 +1,28 @@
 # Pumatra = Puma + Sinatra with Background Worker
 
-Source: https://gist.github.com/ctalkington/4448153
+This is an nginx server that takes file uploads, stores them locally and passes the filename on to a Sinatra app, which then uploads this file to a (potentially remote) blob store. The concept is an extraction from the CloudFoundry [bits-service](https://github.com/cloudfoundry-incubator/bits-service).
 
-## Install
+The name 'pumatra' was first seen on [this gist](https://gist.github.com/ctalkington/4448153).
+
+# Installation
 
 ```bash
+gem install foreman
+brew bundle
 bundle install
 mkdir -p tmp/puma tmp/uploads tmp/store
 ```
 
-We'll also need a [Faktory installation](https://github.com/contribsys/faktory/wiki/Installation) and two environment variables to point to it, e.g. for a Faktory running in a Docker container:
+# Configuration
+
+Faktory uses two environment variables to point to the server:
 
 ```bash
 export FAKTORY_PROVIDER=FAKTORY_URL
-export FAKTORY_URL=tcp://$(docker-machine ip default):7419
+export FAKTORY_URL=tcp://localhost:7419
 ```
+
+# Running
 
 ## Start
 
@@ -28,12 +36,10 @@ foreman start
 curl -X PUT -H "Content-Type:application/octet-stream" --data-binary README.markdown "http://localhost/droplets/550b1d35946db2844bc30ed343599ca573fb9058f3d5c33d777822657c3f51b3"
 ```
 
-# Deployment
-
-`gem install foreman` and then run the following command in the project's directory:
+## Stats
 
 ```bash
-foreman start
+pumactl --control-url unix://tmp/puma/ctl.sock --control-token s3cret stats
 ```
 
 # Development
