@@ -9,12 +9,14 @@ describe 'Pumatra' do
   let(:digest) { SecureRandom.uuid }
   let(:droplet_content) { SecureRandom.bytes(128) }
   let(:endpoint) { "http://localhost:51880/droplets/#{digest}" }
+  let(:stored_file) { Pathname.new("tmp/store/#{digest}") }
+  let(:upload_dir) { Pathname.new('tmp/uploads') }
 
   after do
     stored_file.unlink if stored_file.exist?
   end
 
-  it 'can upload a droplet' do
+  it 'stores an uploaded droplet' do
     RestClient.put(
       endpoint,
       droplet_content,
@@ -26,11 +28,25 @@ describe 'Pumatra' do
     end
   end
 
-  it 'cannot download a non-existing guid' do
+  it 'removes the temporary file after the job has completed' do
+    expect(upload_dir.children).to be_empty
+
+    RestClient.put(
+      endpoint,
+      droplet_content,
+      content_type: 'application/octet-stream'
+    )
+
+    eventually(10) do
+      expect(upload_dir.children).to be_empty
+    end
+  end
+
+  it 'cannot download a non-existing droplet' do
     expect { RestClient.get(endpoint) }.to raise_error RestClient::NotFound
   end
 
-  it 'returns 404 on a HEAD request to a non-existing guid' do
+  it 'returns 404 on a HEAD request to a non-existing droplet' do
     expect { RestClient.head(endpoint) }.to raise_error RestClient::NotFound
   end
 
@@ -48,10 +64,6 @@ describe 'Pumatra' do
       response = RestClient.get(endpoint)
       expect(response.body).to eq(droplet_content)
     end
-  end
-
-  def stored_file
-    Pathname.new("tmp/store/#{digest}")
   end
 
   def eventually(timeout)

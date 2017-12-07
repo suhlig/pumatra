@@ -13,6 +13,7 @@ module Pumatra
       puts "Uploading #{uploading_file} as #{guid} to #{blobstore_root}"
       sleep 2 # simulate expensive work
       Blobstore.new(blobstore_root).put(guid, uploading_file)
+      File.unlink(uploading_file)
     end
   end
 end
