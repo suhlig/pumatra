@@ -8,6 +8,7 @@ AllCops:
   Exclude:
     - vendor/**/*
     - db/migrations/**/*
+    - Brewfile
 
   DisplayCopNames:
     Enabled: true
