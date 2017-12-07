@@ -1,6 +1,6 @@
 name: <%= File.basename(Dir.pwd) %>
 
-pre:
+on_project_start:
   - bundle install
   - mkdir -p tmp/puma tmp/uploads tmp/store
 
