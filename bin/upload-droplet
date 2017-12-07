@@ -16,8 +16,12 @@ die("Could not read #{uploading_file}") unless File.readable?(uploading_file)
 
 digest = Digest::SHA256.file(uploading_file).hexdigest
 
-puts RestClient.put(
-  "http://localhost:51880/droplets/#{digest}",
-  File.read(uploading_file),
-  content_type: 'application/octet-stream'
-)
+begin
+  puts RestClient.put(
+    "http://localhost:51880/droplets/#{digest}",
+    File.read(uploading_file),
+    content_type: 'application/octet-stream'
+  )
+rescue RestClient::Exception => e
+  warn "Error #{e.response.body}"
+end

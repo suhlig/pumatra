@@ -36,7 +36,7 @@ module Pumatra
       begin
         BlobstoreUploader.perform_async(settings.blobstore_root, guid, uploaded_file)
       rescue Errno::ECONNREFUSED
-        halt 500, { 'Content-Type' => 'text/plain' }, "Could not enqueue blobstore upload job because it could not connect to Faktory"
+        halt 500, { 'Content-Type' => 'text/plain' }, 'Could not enqueue blobstore upload job because it could not connect to Faktory'
       end
 
       {
