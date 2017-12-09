@@ -5,7 +5,7 @@ require 'securerandom'
 require 'restclient'
 require 'pathname'
 
-describe 'File Upload' do
+describe 'Droplet Store' do
   let(:digest) { SecureRandom.uuid }
   let(:droplet_content) { SecureRandom.bytes(128) }
   let(:endpoint) { "http://localhost:51880/droplets/#{digest}" }
@@ -23,9 +23,7 @@ describe 'File Upload' do
       content_type: 'application/octet-stream'
     )
 
-    eventually(10) do
-      expect(stored_file).to exist
-    end
+    eventually(10) { expect(stored_file).to exist }
   end
 
   it 'removes the temporary file after the job has completed' do
@@ -37,9 +35,7 @@ describe 'File Upload' do
       content_type: 'application/octet-stream'
     )
 
-    eventually(10) do
-      expect(upload_dir.children).to be_empty
-    end
+    eventually(10) { expect(upload_dir.children).to be_empty }
   end
 
   it 'cannot download a non-existing droplet' do
@@ -55,12 +51,12 @@ describe 'File Upload' do
       stored_file.write(droplet_content)
     end
 
-    it 'can check for a file' do
+    it 'can check for a droplet' do
       response = RestClient.head(endpoint)
       expect(response.code).to eq(200)
     end
 
-    it 'can download a file' do
+    it 'can download a droplet' do
       response = RestClient.get(endpoint)
       expect(response.body).to eq(droplet_content)
     end
@@ -75,7 +71,7 @@ describe 'File Upload' do
         break
       rescue RSpec::Expectations::ExpectationNotMetError
         elapsed_time = Time.now - start_time
-        fail "Could not find #{stored_file} within #{timeout} s" if elapsed_time >= timeout
+        raise if elapsed_time >= timeout
         sleep 0.1
       end
     end
